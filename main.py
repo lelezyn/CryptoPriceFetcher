@@ -6,15 +6,23 @@ def get_crypto_price(crypto_id):
     
     if response.status_code == 200:
         data = response.json()
-        price = data[crypto_id]['usd']
-        return price
+        price = data.get(crypto_id, {}).get('usd')
+        if price is not None:
+            return price
+        else:
+            return f"Criptomoeda '{crypto_id}' não encontrada."
     else:
-        return None
+        return f"Erro na requisição: {response.status_code}"
 
-crypto_id = "bitcoin"  # Pode substituir por qualquer outra criptomoeda suportada pelo CoinGecko
-price = get_crypto_price(crypto_id)
+def main():
+    crypto_id = input("Digite o ID da criptomoeda: ")
+    price = get_crypto_price(crypto_id)
 
-if price:
-    print(f"O preço atual do {crypto_id} é: ${price}")
-else:
-    print("Não foi possível obter o preço da criptomoeda.")
+    if isinstance(price, str):
+        print(price)
+    else:
+        print(f"O preço atual do {crypto_id} é: ${price}")
+
+
+main()
+    
